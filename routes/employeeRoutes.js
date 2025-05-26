@@ -14,4 +14,6 @@ router.post('/login', loginEmployee);
 router.get('/', auth, getAllEmployees);
 router.get('/:id', auth, getSingleEmployee);
 router.get('/count',auth,getEmployeeCount);
+
+
 module.exports = router;

@@ -1,6 +1,6 @@
 const mongoose= require('mongoose')
 
-const attendanceScheme = new mongoose.SchemaType({
+const attendanceScheme = new mongoose.Schema({
     employee:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Employee',

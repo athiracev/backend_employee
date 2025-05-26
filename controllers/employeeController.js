@@ -1,58 +1,58 @@
 const Employee = require('../models/Employee')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const Leave= require('../models/Leave')
-const Attendance= require('../models/Attendance')
+const Leave = require('../models/Leave')
+const Attendance = require('../models/Attendance')
 const moment = require('moment')
 
 // register
-exports.createEmployee = async(req,res)=>{
-    try {
+exports.createEmployee = async (req, res) => {
+  try {
 
-        const{name,phone,email,password,designation,manager}=req.body
+    const { name, phone, email, password, designation, manager } = req.body
 
-        const existing = await Employee.findOne({email})
-        if(existing) return res.status(400).json({message:'Email already exists'})
-        
-            const hashPassword = await bcrypt.hash(passwoord,10)
+    const existing = await Employee.findOne({ email })
+    if (existing) return res.status(400).json({ message: 'Email already exists' })
 
-            const newEmployee = new Employee({
-                name,phone,email,password:hashPassword,designation,manager
-            })
+    const hashPassword = await bcrypt.hash(passwoord, 10)
 
-            await newEmployee.save()
-            res.status(201).json({message:'Employee created successfully'})
-    } catch (error) {
-        res.status(500).json({message:'Server error',error:error.message})
-        
-    }
+    const newEmployee = new Employee({
+      name, phone, email, password: hashPassword, designation, manager
+    })
 
-    // login
-    exports.loginEmployee = async(req,res)=>{
-        try {
-
-            const{email,password}=req.body
-
-            const employee = await Employee.findOne({email})
-            if(!employee) return res.status(404).json({message:'Employee not found'})
-
-            const isMatch = await bcrypt.compare(password,employee.password)
-            if(!isMatch) return res.status(401).json({message:'Invalid credentials'})
-
-            const token= jwt.sign(
-                {id:employee._id,designation:employee.designation},
-                process.env.JWT_SECRET,
-                {expiresIn:'1d'}
-
-            )
-            res.status(201).json({token,employee})
-            
-        } catch (error) {
-            return res.status(500).json({message:'Server error',error:error.message})
-            
-        }
-    }
+    await newEmployee.save()
+    res.status(201).json({ message: 'Employee created successfully' })
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message })
+  }
 }
+
+// login
+exports.loginEmployee = async (req, res) => {
+  try {
+
+    const { email, password } = req.body
+
+    const employee = await Employee.findOne({ email })
+    if (!employee) return res.status(404).json({ message: 'Employee not found' })
+
+    const isMatch = await bcrypt.compare(password, employee.password)
+    if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' })
+
+    const token = jwt.sign(
+      { id: employee._id, designation: employee.designation },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+
+    )
+    res.status(201).json({ token, employee })
+
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error: error.message })
+
+  }
+}
+
 
 // Get all employees
 exports.getAllEmployees = async (req, res) => {
@@ -111,3 +111,4 @@ exports.getEmployeeCount = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
+
