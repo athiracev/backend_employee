@@ -4,8 +4,8 @@ const moment = require('moment');
 
 exports.createLeaveApply = async (req, res) => {
   try {
-    const { type_of_leave, reason, from_date, to_date } = req.body;
-    const employeeId = req.user.id;
+    const { type_of_leave, reason, from_date, to_date,employeeId } = req.body;
+    // const employeeId = req.user.id;
 
     const leave = new Leave({
       employee: employeeId,
@@ -17,6 +17,34 @@ exports.createLeaveApply = async (req, res) => {
 
     await leave.save();
     res.status(201).json({ message: 'Leave applied successfully', leave });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+
+// update leave
+exports.updateLeave = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { type_of_leave, reason, from_date, to_date, status } = req.body;
+
+    // Find the existing leave
+    const existingLeave = await Leave.findById(id);
+    if (!existingLeave) {
+      return res.status(404).json({ message: 'Leave not found' });
+    }
+
+    // Update only the fields provided in the request
+    existingLeave.type_of_leave = type_of_leave || existingLeave.type_of_leave;
+    existingLeave.reason = reason || existingLeave.reason;
+    existingLeave.from_date = from_date || existingLeave.from_date;
+    existingLeave.to_date = to_date || existingLeave.to_date;
+    existingLeave.status = status || existingLeave.status;
+
+    const updatedLeave = await existingLeave.save();
+
+    res.status(200).json({ message: 'Leave updated successfully', leave: updatedLeave });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }

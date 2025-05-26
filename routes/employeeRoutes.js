@@ -6,14 +6,16 @@ const {
   getAllEmployees,
   getSingleEmployee,
   getEmployeeCount,
+  updateEmployee,
 } = require('../controllers/employeeController');
 const auth = require('../middleware/auth');
 
 router.post('/register', createEmployee);
 router.post('/login', loginEmployee);
+router.put('/update/:id', updateEmployee);
+router.get('/count',auth,getEmployeeCount);
 router.get('/', auth, getAllEmployees);
 router.get('/:id', auth, getSingleEmployee);
-router.get('/count',auth,getEmployeeCount);
 
 
 module.exports = router;
